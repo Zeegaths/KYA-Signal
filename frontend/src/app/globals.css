@@ -1,0 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --btc:    #F7931A;
+  --acid:   #cafd00;
+  --black:  #0A0A0A;
+  --amber:  #F59E0B;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  background: #0A0A0A;
+  color: #ffffff;
+  font-family: 'Space Grotesk', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
+
+/* Selection */
+::selection { background: #F7931A33; color: #fff; }
+
+/* Score ring animation */
+.score-ring circle {
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Skeleton shimmer */
+.skeleton {
+  background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Verified glow */
+.verified-glow {
+  box-shadow: 0 0 0 1px #cafd0033, 0 0 24px #cafd0022;
+}
+
+/* BTC glow */
+.btc-glow {
+  box-shadow: 0 0 0 1px #F7931A33, 0 0 24px #F7931A22;
+}
+
+/* Monospace hash display */
+.hash-mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #555;
+  word-break: break-all;
+  letter-spacing: -0.02em;
+}
+
+/* Chain badge */
+.chain-solana  { background: #9945FF22; color: #9945FF; border-color: #9945FF44; }
+.chain-ethereum { background: #627EEA22; color: #627EEA; border-color: #627EEA44; }
+.chain-stacks  { background: #F7931A22; color: #F7931A; border-color: #F7931A44; }
+
+/* Dispute badge */
+.dispute-open         { background: #F59E0B22; color: #F59E0B; }
+.dispute-under-review { background: #3B82F622; color: #3B82F6; }
+.dispute-resolved     { background: #cafd0022; color: #cafd00; }
+.dispute-dismissed    { background: #55555522; color: #555; }
+
