@@ -1,7 +1,3 @@
 {
-  "name": "kya-signal",
-  "scripts": {
-    "build": "cd frontend && npm install && npm run build",
-    "dev": "cd frontend && npm run dev"
-  }
+  "name": "kya-signal-monorepo"
 }
