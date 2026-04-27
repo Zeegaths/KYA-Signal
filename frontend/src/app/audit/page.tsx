@@ -3,7 +3,7 @@ import AuditClient from './AuditClient';
 
 export default function AuditPage() {
   return (
-    <Suspense fallback={<div style={{ color: '#555', padding: '40px', fontFamily: 'JetBrains Mono' }}>Loading...</div>}>
+    <Suspense fallback={null}>
       <AuditClient />
     </Suspense>
   );
