@@ -1,0 +1,20 @@
+[project]
+name = "kya-signal"
+authors = []
+description = "KYA Signal — Bitcoin-anchored cross-chain agent reputation"
+telemetry = false
+
+[contracts.kya-score]
+path = "contracts/kya-score.clar"
+clarity_version = 2
+epoch = "2.5"
+
+[contracts.mezo-lender-query]
+path = "contracts/mezo-lender-query.clar"
+clarity_version = 2
+epoch = "2.5"
+
+[repl]
+costs_version = 2
+parser_version = 2
+

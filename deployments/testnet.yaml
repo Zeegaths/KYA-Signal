@@ -1,0 +1,15 @@
+---
+id: 1
+name: testnet-deployment
+network: testnet
+banner: KYA Signal — deploying to Stacks testnet
+
+contracts:
+  - contract-id: kya-score
+    expected-sender: deployer
+    clarity-version: 2
+
+  - contract-id: mezo-lender-query
+    expected-sender: deployer
+    clarity-version: 2
+

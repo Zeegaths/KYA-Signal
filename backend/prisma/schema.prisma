@@ -1,0 +1,190 @@
+// KYA Signal — Prisma Schema
+// Implements: versioned normalization configs, GEID as deterministic hash,
+// rate-limited protocol queries, dispute mechanism, Redis cache hints
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =====================================================================
+// AGENTS
+// =====================================================================
+
+model Agent {
+  id                String   @id @default(cuid())
+  geid              String   @unique   // deterministic: sha256(sourceChainKey + stacksKey)
+  sourceChainKey    String              // e.g. Solana pubkey or ETH address
+  sourceChain       String              // "solana" | "ethereum" | "stacks"
+  stacksKey         String              // Stacks principal
+  mezowallet        String?             // Mezo wallet address (optional, linked later)
+  registeredAtBlock Int                 // Bitcoin block height at registration
+  registeredAt      DateTime @default(now())
+  active            Boolean  @default(true)
+  emailHash         String?             // hashed email for alerts (never store plaintext)
+
+  scoreEvents       ScoreEvent[]
+  protocolQueries   ProtocolQuery[]
+  disputes          ScoreDispute[]
+
+  @@index([stacksKey])
+  @@index([sourceChainKey])
+}
+
+// =====================================================================
+// NORMALIZATION CONFIG (versioned)
+// =====================================================================
+// Each version gets a hash. That hash is stored on-chain with every score.
+// Auditors can compare the on-chain hash to the DB record to verify weights.
+
+model NormalizationConfig {
+  id          String   @id @default(cuid())
+  version     String   @unique          // e.g. "v1.0.0"
+  configHash  String   @unique          // sha256(JSON.stringify(weights))
+  weights     Json                      // { solana: { vault_rebalance: 0.3, liquidation: 0.4, uptime: 0.3 }, ethereum: { ... } }
+  description String?
+  createdAt   DateTime @default(now())
+  activatedAt DateTime?
+  deprecated  Boolean  @default(false)
+
+  scoreEvents ScoreEvent[]
+}
+
+// =====================================================================
+// SCORE EVENTS
+// =====================================================================
+
+model ScoreEvent {
+  id                  String   @id @default(cuid())
+  agentId             String
+  agent               Agent    @relation(fields: [agentId], references: [id])
+  configId            String
+  config              NormalizationConfig @relation(fields: [configId], references: [id])
+  configHash          String              // denormalized for fast audit lookups
+  rawInputsHash       String              // sha256 of the raw chain events JSON used
+  chain               String              // "solana" | "ethereum" | "stacks"
+  txHash              String?
+  eventType           String              // "vault_rebalance" | "liquidation" | "uptime" | "protocol_interaction"
+  rawScoreDelta       Float               // raw contribution before normalization
+  normalizedScore     Float               // final 0-100 score after this event
+  btcBlockHeight      Int                 // Bitcoin block anchoring
+  stacksBlockHeight   Int
+  submittedByOracle   String              // oracle wallet address
+  createdAt           DateTime @default(now())
+
+  disputes            ScoreDispute[]
+
+  @@index([agentId, createdAt])
+  @@index([btcBlockHeight])
+  @@index([configHash])
+}
+
+// =====================================================================
+// CHAIN REGISTRY
+// =====================================================================
+
+model ChainRegistry {
+  id                 String   @id @default(cuid())
+  chainId            String   @unique  // "solana" | "ethereum" | "stacks"
+  displayName        String
+  rpcEndpoint        String
+  rpcProvider        String            // "helius" | "alchemy" | "quicknode"
+  active             Boolean  @default(true)
+  normalizationWeight Float            // global weight of this chain in composite score
+  lastIndexedBlock   Int      @default(0)
+  updatedAt          DateTime @updatedAt
+}
+
+// =====================================================================
+// PROTOCOL QUERIES (rate-limited)
+// =====================================================================
+
+model ProtocolQuery {
+  id              String   @id @default(cuid())
+  protocolAddress String                // protocol wallet / contract address
+  agentId         String
+  agent           Agent    @relation(fields: [agentId], references: [id])
+  geid            String
+  verified        Boolean
+  suggestedLtv    Int                   // 60 | 80 | 90
+  btcBlockHeight  Int
+  responseMs      Int                   // latency for SLA tracking
+  createdAt       DateTime @default(now())
+
+  @@index([protocolAddress, createdAt])
+  @@index([geid])
+}
+
+// Rate limit tracker (short-lived, could be in Redis — replicated here for audit)
+model QueryRateLimit {
+  id              String   @id @default(cuid())
+  protocolAddress String
+  btcBlockHeight  Int
+  count           Int      @default(0)
+  updatedAt       DateTime @updatedAt
+
+  @@unique([protocolAddress, btcBlockHeight])
+  @@index([protocolAddress])
+}
+
+// =====================================================================
+// SCORE DISPUTES
+// =====================================================================
+
+model ScoreDispute {
+  id            String   @id @default(cuid())
+  agentId       String
+  agent         Agent    @relation(fields: [agentId], references: [id])
+  scoreEventId  String
+  scoreEvent    ScoreEvent @relation(fields: [scoreEventId], references: [id])
+  flaggedBy     String              // wallet address or "agent"
+  reason        String
+  status        DisputeStatus @default(OPEN)
+  resolution    String?
+  resolvedAt    DateTime?
+  createdAt     DateTime @default(now())
+
+  @@index([agentId])
+  @@index([status])
+}
+
+enum DisputeStatus {
+  OPEN
+  UNDER_REVIEW
+  RESOLVED
+  DISMISSED
+}
+
+// =====================================================================
+// EMAIL ALERTS
+// =====================================================================
+
+model AlertTemplate {
+  id        String   @id @default(cuid())
+  type      AlertType @unique
+  subject   String
+  htmlBody  String
+  active    Boolean  @default(true)
+}
+
+model AlertLog {
+  id           String    @id @default(cuid())
+  agentId      String
+  type         AlertType
+  recipientHash String             // hashed email
+  sentAt       DateTime  @default(now())
+  success      Boolean
+}
+
+enum AlertType {
+  REGISTRATION_CONFIRM
+  SCORE_THRESHOLD_CROSSED
+  PROTOCOL_QUERY_RECEIVED
+  DISPUTE_OPENED
+  DISPUTE_RESOLVED
+}
+

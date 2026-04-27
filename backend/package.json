@@ -1,0 +1,43 @@
+{
+  "name": "kya-signal-backend",
+  "version": "1.0.0",
+  "description": "KYA Signal oracle backend — chain listeners, normalization engine, Stacks submitter",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "tsx src/seed.ts",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.10.0",
+    "@stacks/transactions": "^6.12.0",
+    "@stacks/network": "^6.12.0",
+    "@stacks/auth": "^6.12.0",
+    "@solana/web3.js": "^1.91.0",
+    "ethers": "^6.11.0",
+    "fastify": "^4.26.0",
+    "@fastify/cors": "^9.0.0",
+    "@fastify/rate-limit": "^9.1.0",
+    "ioredis": "^5.3.2",
+    "bull": "^4.12.2",
+    "zeptomail": "^6.0.0",
+    "zod": "^3.22.4",
+    "pino": "^8.19.0",
+    "pino-pretty": "^11.0.0",
+    "dotenv": "^16.4.5",
+    "crypto": "^1.0.1",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.0",
+    "tsx": "^4.7.0",
+    "prisma": "^5.10.0",
+    "vitest": "^1.4.0"
+  }
+}
+
