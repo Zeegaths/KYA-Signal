@@ -102,7 +102,7 @@ export const api = {
     stacksKey: string;
     emailHash?: string;
   }) => apiFetch<{ geid: string; registeredAtBlock: number; message: string }>(
-    '/agents/register', { method: 'POST', body: JSON.stringify(body) }
+    '/api/agents/register', { method: 'POST', body: JSON.stringify(body) }
   ),
 
   linkMezo: (geid: string, mezowallet: string) =>

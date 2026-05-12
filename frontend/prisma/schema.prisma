@@ -1,0 +1,20 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Agent {
+  id                String   @id @default(cuid())
+  geid              String   @unique
+  sourceChainKey    String
+  sourceChain       String
+  stacksKey         String
+  mezowallet        String?
+  registeredAtBlock Int
+  registeredAt      DateTime @default(now())
+  active            Boolean  @default(true)
+  emailHash         String?
+}

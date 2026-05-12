@@ -124,15 +124,19 @@ export class StacksOracle {
     await broadcastTransaction(transaction, this.network);
   }
 
-  private async getBtcBlockHeight(): Promise<number> {
-    try {
-      const res = await fetch(`${this.network.coreApiUrl}/v2/info`);
-      const data = await res.json() as { burn_block_height: number };
-      return data.burn_block_height;
-    } catch {
-      return 0;
-    }
+private async getBtcBlockHeight(): Promise<number> {
+  try {
+    const res = await fetch(process.env.MEZO_RPC_URL ?? 'https://testnet.mezo.validationcloud.io/v1/fOcZy5Rux44FkjUb_WuIqwqwoq2XdN0BMVZDD0XUP04', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_blockNumber', params: [] }),
+    });
+    const data = await res.json() as { result: string };
+    return parseInt(data.result, 16);
+  } catch {
+    return 0;
   }
+}
 
   private async checkThresholdAlert(agentId: string, score: number): Promise<void> {
     const THRESHOLD = 85;
