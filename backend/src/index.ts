@@ -51,7 +51,7 @@ async function bootstrap() {
 
   // ── Chain listeners ────────────────────────────────────────────────
   const solanaListener = new SolanaListener(prisma, {
-    rpcEndpoint: process.env.SOLANA_RPC_ENDPOINT ?? 'https://api.mainnet-beta.solana.com',
+    rpcEndpoint: process.env.SOLANA_RPC_ENDPOINT ?? 'https://api.devnet.solana.com',
     programIds: [],
     pollingIntervalMs: 10_000,
   });

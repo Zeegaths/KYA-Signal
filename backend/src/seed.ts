@@ -18,7 +18,7 @@ async function main() {
     {
       chainId: 'solana',
       displayName: 'Solana',
-      rpcEndpoint: process.env.SOLANA_RPC_ENDPOINT ?? 'https://api.mainnet-beta.solana.com',
+      rpcEndpoint: process.env.SOLANA_RPC_ENDPOINT ?? 'https://api.devnet.solana.com',
       rpcProvider: 'helius',
       normalizationWeight: 0.45,
     },
