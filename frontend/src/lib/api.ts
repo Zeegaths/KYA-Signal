@@ -115,24 +115,24 @@ export const api = {
     apiFetch<AgentScore>(`/api/agents/${geid}/score`),
 
   getProfile: (geid: string) =>
-    apiFetch<AgentProfile>(`/agents/${geid}/profile`),
+    apiFetch<AgentProfile>(`/api/agents/${geid}/score`),
 
   getBreakdown: (geid: string) =>
-    apiFetch<ScoreBreakdown>(`/agents/${geid}/breakdown`),
+    apiFetch<ScoreBreakdown>(`/api/agents/${geid}/score`),
 
   getAudit: (geid: string, page = 1, limit = 20) =>
-    apiFetch<AuditTrail>(`/agents/${geid}/audit?page=${page}&limit=${limit}`),
+    apiFetch<AuditTrail>(`/api/agents/${geid}/score`),
 
   // Protocol query
   query: (geid: string, protocolAddress: string) =>
     apiFetch<{ verified: boolean; suggestedLtv: number; btcBlock: number; cached: boolean }>(
-      '/protocol/query', { method: 'POST', body: JSON.stringify({ geid, protocolAddress }) }
+      '/api/protocol/query', { method: 'POST', body: JSON.stringify({ geid, protocolAddress }) }
     ),
 
   // Disputes
   createDispute: (body: { geid: string; scoreEventId: string; reason: string; flaggedBy: string }) =>
     apiFetch<{ disputeId: string; status: string }>(
-      '/disputes', { method: 'POST', body: JSON.stringify(body) }
+      '/api/disputes', { method: 'POST', body: JSON.stringify(body) }
     ),
 
   getDisputes: (geid: string) =>
