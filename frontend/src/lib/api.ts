@@ -112,7 +112,7 @@ export const api = {
     ),
 
   getScore: (geid: string) =>
-    apiFetch<AgentScore>(`/agents/${geid}/score`),
+    apiFetch<AgentScore>(`/api/agents/${geid}/score`),
 
   getProfile: (geid: string) =>
     apiFetch<AgentProfile>(`/agents/${geid}/profile`),
