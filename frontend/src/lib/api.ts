@@ -1,9 +1,10 @@
 // KYA Signal — Frontend API Client
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
+const NEXT_BASE = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
 
 async function apiFetch<T>(path: string, opts?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
+  const res = await fetch(path.startsWith("/api/") ? `${NEXT_BASE}${path}` : `${API_BASE}${path}`, {
     headers: { 'Content-Type': 'application/json', ...opts?.headers },
     ...opts,
   });

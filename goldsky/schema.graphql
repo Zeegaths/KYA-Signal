@@ -1,0 +1,12 @@
+type AgentEvent @entity(immutable: true) {
+  id: ID!
+  agent: String!
+  eventType: String!
+  blockNumber: BigInt!
+  timestamp: BigInt!
+  txHash: String!
+  collateralAsset: String
+  debtAsset: String
+  amount: BigDecimal
+  chain: String!
+}

@@ -196,7 +196,7 @@ export class NormalizationEngine {
 
       if (dbConfig) {
         return {
-          weights: dbConfig.weights as NormalizationWeights,
+          weights: dbConfig.weights as unknown as NormalizationWeights,
           version: dbConfig.version,
           id: dbConfig.id,
         };

@@ -1,0 +1,24 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: AaveLiquidations
+    network: sepolia
+    source:
+      address: "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951"
+      abi: AavePool
+      startBlock: 5000000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - AgentEvent
+      abis:
+        - name: AavePool
+          file: ./abis/AavePool.json
+      eventHandlers:
+        - event: LiquidationCall(indexed address,indexed address,indexed address,uint256,uint256,address,bool)
+          handler: handleLiquidationCall
+      file: ./src/mapping.ts
