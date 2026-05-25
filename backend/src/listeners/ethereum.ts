@@ -45,7 +45,7 @@ export class EthereumListener {
       const agent = agentMap.get(event.agent.toLowerCase());
       const blockNum = parseInt(event.blockNumber);
       if (blockNum > this.lastIndexedBlock) this.lastIndexedBlock = blockNum;
-      console.log('[eth-listener] Liquidation indexed for agent ' + (agent as any).geid);
+      if (agent) console.log('[eth-listener] Liquidation indexed for block ' + blockNum);
     }
   }
 
